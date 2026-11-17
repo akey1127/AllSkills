@@ -1,36 +1,33 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# All-Skills (web MVP)
 
-## Getting Started
+Trades-first creator platform: **subscriptions**, **PPV posts**, **tips**, **forums** (Supabase Realtime), **Mux** video, and **LiveKit** live rooms.
 
-First, run the development server:
+## Setup
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+1. **Install**: `npm install`
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+2. **Supabase**: Create a project, run SQL from `supabase/migrations/` in order (SQL editor or CLI).
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+3. **Environment**: `.env.local` is in the repo with placeholders—paste **Project URL**, **anon** (or **publishable**) key, and **service_role** from Supabase **Project Settings → API**. You can use either `NEXT_PUBLIC_SUPABASE_ANON_KEY` or `NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY` (see `.env.example`). Restart `npm run dev` after edits.
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+4. **Auth**: In Supabase Auth settings, add redirect URL `http://localhost:3000/auth/callback` (and production URL).
 
-## Learn More
+5. **Stripe Connect**: Use test mode; create a Connect webhook endpoint pointing to `/api/stripe/webhook`. Enable events for `checkout.session.completed`, `customer.subscription.updated`, `customer.subscription.deleted`, and `account.updated`. For Connect, ensure your endpoint receives events from connected accounts (Stripe Dashboard → Webhooks → Add endpoint → Listen to events on Connected accounts).
 
-To learn more about Next.js, take a look at the following resources:
+6. **Mux**: Configure a webhook URL to `/api/mux/webhook` with signing secret matching `MUX_WEBHOOK_SECRET`.
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+7. **Forums realtime**: In Supabase → Database → Replication, enable `forum_posts` for Realtime if you want live thread updates.
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+8. **Run**: `npm run dev`
 
-## Deploy on Vercel
+## Product spec
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
+See `docs/product-spec.md` for user journeys, entitlements, and refund notes.
 
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+## Stack
+
+- Next.js App Router, TypeScript, Tailwind
+- Supabase (Auth, Postgres, RLS, Realtime)
+- Stripe Connect (Express accounts, Checkout)
+- Mux (direct upload, playback)
+- LiveKit (rooms + tokens)
